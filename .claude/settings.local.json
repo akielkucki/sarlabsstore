@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:docs.tebex.io)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm install:*)",
+      "Bash(npx next:*)",
+      "WebFetch(domain:sarlabs.vercel.app)",
+      "Bash(npx prisma:*)",
+      "Bash(npx auth:*)",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(32\\).toString\\('hex'\\)\\)\")",
+      "Bash(npx shadcn@latest init -y)",
+      "Bash(npx shadcn@latest init --defaults)"
+    ]
+  }
+}
