@@ -7,20 +7,21 @@ export default async function PackagePage(
 	props: PageProps<"/package/[id]">,
 ) {
 	const { id } = await props.params;
-
 	const pkg = await getPackage(id);
 
 	if (!pkg) {
 		return (
 			<div className="flex min-h-[60vh] items-center justify-center">
 				<div className="text-center">
-					<h1 className="text-2xl font-bold text-white">Package Not Found</h1>
-					<p className="mt-2 text-muted">
+					<h1 className="text-2xl font-bold text-foreground">
+						Package Not Found
+					</h1>
+					<p className="mt-2 text-muted-foreground">
 						This package doesn&apos;t exist or couldn&apos;t be loaded.
 					</p>
 					<Link
 						href="/"
-						className="mt-4 inline-block text-sm font-medium text-accent hover:text-rose"
+						className="mt-4 inline-block text-sm font-medium text-rose-400 hover:text-rose-300"
 					>
 						&larr; Back to Store
 					</Link>
@@ -41,13 +42,15 @@ export default async function PackagePage(
 					: `${pkg.currency} `;
 
 	return (
-		<div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-			{/* Breadcrumb */}
-			<div className="flex items-center gap-2 text-sm text-muted mb-8">
-				<Link href="/" className="hover:text-foreground transition-colors">
+		<div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+			<div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+				<Link
+					href="/"
+					className="hover:text-foreground transition-colors"
+				>
 					Store
 				</Link>
-				<span>/</span>
+				<span className="text-muted-foreground/40">/</span>
 				{pkg.category && (
 					<>
 						<Link
@@ -56,15 +59,16 @@ export default async function PackagePage(
 						>
 							{pkg.category.name}
 						</Link>
-						<span>/</span>
+						<span className="text-muted-foreground/40">/</span>
 					</>
 				)}
-				<span className="text-zinc-300 truncate max-w-[200px]">{pkg.name}</span>
+				<span className="text-foreground truncate max-w-[200px]">
+					{pkg.name}
+				</span>
 			</div>
 
 			<div className="grid gap-10 lg:grid-cols-2">
-				{/* Image */}
-				<div className="relative aspect-square overflow-hidden rounded-2xl border border-card-border bg-zinc-900">
+				<div className="relative aspect-square overflow-hidden rounded-2xl border border-border bg-card/30">
 					{pkg.image ? (
 						<Image
 							src={pkg.image}
@@ -74,10 +78,10 @@ export default async function PackagePage(
 							priority
 						/>
 					) : (
-						<div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900">
-							<div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-accent/20 to-rose/20 flex items-center justify-center">
+						<div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary to-card">
+							<div className="h-24 w-24 rounded-2xl bg-rose-500/10 flex items-center justify-center">
 								<svg
-									className="w-12 h-12 text-accent/50"
+									className="w-12 h-12 text-rose-500/30"
 									fill="none"
 									stroke="currentColor"
 									viewBox="0 0 24 24"
@@ -93,28 +97,35 @@ export default async function PackagePage(
 						</div>
 					)}
 					{hasDiscount && (
-						<div className="absolute top-4 right-4 rounded-full bg-red-500 px-3 py-1 text-sm font-bold text-white shadow-lg">
+						<div className="absolute top-4 right-4 rounded-full bg-rose-500 px-3 py-1 text-sm font-bold text-white shadow-lg shadow-rose-500/30">
 							SALE
 						</div>
 					)}
 				</div>
 
-				{/* Details */}
 				<div className="flex flex-col">
-					<h1 className="text-3xl font-bold text-white">{pkg.name}</h1>
-
+					<h1 className="text-3xl font-black text-foreground">
+						{pkg.name}
+					</h1>
 					<div className="mt-4 flex items-baseline gap-3">
-						<span className="text-4xl font-black text-accent">
+						<span className="text-4xl font-black text-foreground">
 							{currencySymbol}
 							{pkg.total_price.toFixed(2)}
 						</span>
 						{hasDiscount && (
-							<span className="text-lg text-muted line-through">
+							<span className="text-lg text-muted-foreground line-through">
 								{currencySymbol}
 								{pkg.base_price.toFixed(2)}
 							</span>
 						)}
 					</div>
+					<p className="mt-2 text-sm text-muted-foreground">
+						Earn{" "}
+						<span className="text-rose-400 font-semibold">
+							{Math.floor(pkg.total_price * 10)} points
+						</span>{" "}
+						with this purchase
+					</p>
 
 					<div className="mt-6">
 						<AddToCartButton
@@ -127,15 +138,14 @@ export default async function PackagePage(
 						/>
 					</div>
 
-					<div className="mt-8 h-px bg-gradient-to-r from-accent/20 to-transparent" />
+					<div className="mt-8 h-px bg-border" />
 
-					{/* Description */}
 					{pkg.description && (
 						<div className="mt-8">
-							<h2 className="text-sm font-semibold uppercase tracking-wider text-accent/70 mb-4">
+							<h2 className="text-xs font-bold uppercase tracking-[0.15em] text-muted-foreground mb-4">
 								Description
 							</h2>
-							<div className="prose prose-invert prose-sm prose-zinc max-w-none [&_img]:rounded-lg [&_a]:text-accent [&_a:hover]:text-rose [&_li]:text-zinc-300 [&_p]:text-zinc-300">
+							<div className="prose prose-invert prose-sm max-w-none [&_a]:text-rose-400 [&_a:hover]:text-rose-300 [&_li]:text-muted-foreground [&_p]:text-muted-foreground leading-relaxed">
 								{pkg.description}
 							</div>
 						</div>

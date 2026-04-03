@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { Particles } from "@/components/ui/particles";
 
 function CheckoutCompleteContent() {
 	const { clearCart } = useCart();
@@ -27,19 +28,23 @@ function CheckoutCompleteContent() {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				if (data.awarded) {
-					setPointsAwarded(data.awarded);
-				}
+				if (data.awarded) setPointsAwarded(data.awarded);
 			})
 			.catch(() => {});
 	}, [searchParams, session]);
 
 	return (
-		<div className="flex min-h-[70vh] items-center justify-center px-4">
-			<div className="text-center max-w-md">
-				<div className="mx-auto h-20 w-20 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-6">
+		<div className="relative flex min-h-[85vh] items-center justify-center px-4">
+			<Particles
+				className="absolute inset-0"
+				quantity={40}
+				color="#4ade80"
+				ease={80}
+			/>
+			<div className="relative z-10 text-center max-w-md">
+				<div className="mx-auto h-20 w-20 rounded-2xl bg-emerald-500/10 border border-emerald-500/15 flex items-center justify-center mb-6">
 					<svg
-						className="w-10 h-10 text-green-400"
+						className="w-10 h-10 text-emerald-400"
 						fill="none"
 						stroke="currentColor"
 						viewBox="0 0 24 24"
@@ -52,18 +57,17 @@ function CheckoutCompleteContent() {
 						/>
 					</svg>
 				</div>
-				<h1 className="text-3xl font-bold text-white mb-3">
+				<h1 className="text-3xl font-black text-foreground mb-3">
 					Purchase Complete!
 				</h1>
-				<p className="text-muted mb-4">
-					Thank you for your purchase! Your items will be delivered to your
-					account shortly. Check in-game for your new items.
+				<p className="text-muted-foreground mb-4">
+					Thank you! Your items will be delivered to your account shortly.
 				</p>
 
 				{pointsAwarded !== null && pointsAwarded > 0 && (
-					<div className="rounded-xl border border-accent/20 bg-accent/5 p-4 mb-6">
-						<p className="text-sm text-muted">You earned</p>
-						<p className="text-2xl font-black text-accent">
+					<div className="rounded-2xl border border-rose-500/15 bg-rose-500/5 p-5 mb-6">
+						<p className="text-sm text-muted-foreground">You earned</p>
+						<p className="text-3xl font-black text-rose-400">
 							+{pointsAwarded} points
 						</p>
 					</div>
@@ -71,7 +75,7 @@ function CheckoutCompleteContent() {
 
 				<Link
 					href="/"
-					className="inline-block rounded-lg bg-gradient-to-r from-accent to-rose px-6 py-3 text-sm font-semibold text-white hover:from-rose hover:to-accent transition-all shadow-lg shadow-accent/25"
+					className="inline-flex rounded-xl bg-rose-500 px-8 py-3 text-sm font-semibold text-white hover:bg-rose-400 transition-colors shadow-lg shadow-rose-500/20"
 				>
 					Continue Shopping
 				</Link>
@@ -84,8 +88,8 @@ export default function CheckoutCompletePage() {
 	return (
 		<Suspense
 			fallback={
-				<div className="flex min-h-[70vh] items-center justify-center">
-					<div className="h-8 w-8 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+				<div className="flex min-h-[85vh] items-center justify-center">
+					<div className="h-8 w-8 rounded-full border-2 border-rose-500 border-t-transparent animate-spin" />
 				</div>
 			}
 		>

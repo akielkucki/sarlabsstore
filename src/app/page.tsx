@@ -1,6 +1,8 @@
 import { getCategories } from "@/lib/stripe";
 import { PackageCard } from "@/components/package-card";
 import { DealsCarousel } from "@/components/deals-carousel";
+import { Hero } from "@/components/hero";
+import { Testimonials } from "@/components/testimonials";
 import Link from "next/link";
 
 export default async function Home() {
@@ -11,8 +13,10 @@ export default async function Home() {
 		return (
 			<div className="flex min-h-[60vh] items-center justify-center">
 				<div className="text-center">
-					<h1 className="text-2xl font-bold text-white">Store Unavailable</h1>
-					<p className="mt-2 text-muted">
+					<h1 className="text-2xl font-bold text-foreground">
+						Store Unavailable
+					</h1>
+					<p className="mt-2 text-muted-foreground">
 						Unable to load store data. Please try again later.
 					</p>
 				</div>
@@ -20,7 +24,6 @@ export default async function Home() {
 		);
 	}
 
-	// Collect all packages that have a discount for the deals carousel
 	const salePackages = categories
 		.flatMap((c) => c.packages ?? [])
 		.filter((p) => p.base_price > p.total_price);
@@ -28,89 +31,74 @@ export default async function Home() {
 	return (
 		<div className="flex flex-col">
 			{/* Hero */}
-			<section className="relative overflow-hidden bg-background">
-				<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(225,29,72,0.08),transparent_70%)]" />
-				<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(167,139,250,0.05),transparent_50%)]" />
-				<div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-					<div className="text-center">
-						<div className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-xs font-medium text-rose mb-6">
-							<span className="h-1.5 w-1.5 rounded-full bg-rose animate-pulse" />
-							Official Server Store
-						</div>
-						<h1 className="text-5xl font-black tracking-tight sm:text-7xl">
-							<span className="text-white">Welcome to </span>
-							<span className="bg-gradient-to-r from-rose-400 via-accent to-purple-400 bg-clip-text text-transparent animate-gradient text-glow-rose">
-								SarLabs
-							</span>
-						</h1>
-						<p className="mx-auto mt-6 max-w-xl text-lg text-foreground/60">
-							Enhance your gameplay with premium ranks, kits, and exclusive
-							items. Support the server and unlock powerful perks.
-						</p>
-						<div className="mt-8 flex items-center justify-center gap-4">
-							{categories.length > 0 && (
-								<Link
-									href={`/category/${categories[0].id}`}
-									className="rounded-lg bg-gradient-to-r from-accent to-rose px-6 py-3 text-sm font-semibold text-white hover:from-rose hover:to-accent transition-all shadow-lg shadow-accent/25 hover:shadow-accent/40"
-								>
-									Browse Store
-								</Link>
-							)}
-						</div>
-					</div>
-				</div>
-				<div className="h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
-			</section>
+			<Hero firstCategoryId={categories[0]?.id} />
 
-			<section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-				{/* Deals of the Week Carousel */}
+			{/* Store section */}
+			<section
+				id="store"
+				className="relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
+			>
+				{/* Deals Carousel */}
 				{salePackages.length > 0 && (
-					<div className="mb-16">
-						<div className="flex items-center gap-3 mb-6">
-							<div className="h-8 w-1 rounded-full bg-gradient-to-b from-red-400 to-red-600" />
-							<h2 className="text-2xl font-bold text-white">
+					<div className="mb-20">
+						<div className="flex items-center gap-3 mb-8">
+							<div className="h-8 w-1 rounded-full bg-gradient-to-b from-rose-400 to-rose-600" />
+							<h2 className="text-2xl font-black text-foreground">
 								Deals of the Week
 							</h2>
-							<span className="ml-2 rounded-full bg-red-500/10 border border-red-500/20 px-3 py-0.5 text-xs font-semibold text-red-400">
-								SAVE NOW
+							<span className="ml-2 rounded-full bg-rose-500/10 border border-rose-500/15 px-3 py-0.5 text-[11px] font-bold text-rose-400 uppercase tracking-wider">
+								Save
 							</span>
 						</div>
 						<DealsCarousel packages={salePackages} />
 					</div>
 				)}
 
-				{/* Categories with packages */}
+				{/* Categories */}
 				{categories.map((category) => (
-					<div key={category.id} className="mb-16 last:mb-0">
-						<div className="flex items-center justify-between mb-6">
+					<div key={category.id} className="mb-20 last:mb-0">
+						<div className="flex items-center justify-between mb-8">
 							<div className="flex items-center gap-3">
-								<div className="h-8 w-1 rounded-full bg-gradient-to-b from-accent to-rose" />
-								<h2 className="text-2xl font-bold text-white">
+								<div className="h-8 w-1 rounded-full bg-gradient-to-b from-rose-500 to-violet-500" />
+								<h2 className="text-2xl font-black text-foreground">
 									{category.name}
 								</h2>
 							</div>
 							<Link
 								href={`/category/${category.id}`}
-								className="text-sm font-medium text-rose/70 hover:text-rose transition-colors"
+								className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors group flex items-center gap-1.5"
 							>
-								View All &rarr;
+								View All
+								<svg
+									className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M9 5l7 7-7 7"
+									/>
+								</svg>
 							</Link>
 						</div>
 						{category.description && (
-							<p className="mb-6 text-sm text-muted max-w-2xl">
+							<p className="mb-6 text-sm text-muted-foreground max-w-2xl">
 								{category.description}
 							</p>
 						)}
 						{category.packages && category.packages.length > 0 ? (
 							<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-								{category.packages.slice(0, 5).map((pkg) => (
-									<PackageCard key={pkg.id} pkg={pkg} />
+								{category.packages.slice(0, 5).map((pkg, i) => (
+									<PackageCard key={pkg.id} pkg={pkg} index={i} />
 								))}
 							</div>
 						) : (
-							<div className="rounded-xl border border-card-border bg-zinc-900/50 p-8 text-center">
-								<p className="text-sm text-muted">
-									No packages available in this category yet.
+							<div className="rounded-2xl border border-border bg-card/30 p-8 text-center">
+								<p className="text-sm text-muted-foreground">
+									No packages available yet.
 								</p>
 							</div>
 						)}
@@ -120,9 +108,9 @@ export default async function Home() {
 				{categories.length === 0 && (
 					<div className="flex min-h-[40vh] items-center justify-center">
 						<div className="text-center">
-							<div className="mx-auto h-16 w-16 rounded-xl bg-zinc-900 flex items-center justify-center mb-4">
+							<div className="mx-auto h-16 w-16 rounded-2xl bg-card flex items-center justify-center mb-4 border border-border">
 								<svg
-									className="w-8 h-8 text-zinc-600"
+									className="w-8 h-8 text-muted-foreground"
 									fill="none"
 									stroke="currentColor"
 									viewBox="0 0 24 24"
@@ -135,15 +123,38 @@ export default async function Home() {
 									/>
 								</svg>
 							</div>
-							<h2 className="text-lg font-semibold text-white">
+							<h2 className="text-lg font-bold text-foreground">
 								Store Coming Soon
 							</h2>
-							<p className="mt-2 text-sm text-muted">
+							<p className="mt-2 text-sm text-muted-foreground">
 								Packages are being set up. Check back soon!
 							</p>
 						</div>
 					</div>
 				)}
+			</section>
+
+			{/* Testimonials */}
+			<Testimonials />
+
+			{/* CTA */}
+			<section className="relative py-24 overflow-hidden">
+				<div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_50%,rgba(225,29,72,0.08),transparent_70%)]" />
+				<div className="relative mx-auto max-w-2xl px-4 text-center sm:px-6 lg:px-8">
+					<h2 className="text-3xl sm:text-4xl font-black text-foreground mb-4">
+						Ready to dominate?
+					</h2>
+					<p className="text-muted-foreground mb-8 max-w-md mx-auto">
+						Create an account to earn points on every purchase and unlock
+						exclusive rewards.
+					</p>
+					<Link
+						href="/signin"
+						className="inline-flex rounded-xl bg-rose-500 px-8 py-3.5 text-sm font-semibold text-white hover:bg-rose-400 transition-colors shadow-lg shadow-rose-500/20"
+					>
+						Get Started Free
+					</Link>
+				</div>
 			</section>
 		</div>
 	);

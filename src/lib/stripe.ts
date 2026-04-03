@@ -81,6 +81,9 @@ export async function getCategories(): Promise<StoreCategory[]> {
 
 	for (const pkg of products) {
 		const catId = pkg.category.id;
+		const product = await stripe.products.retrieve(pkg.id);
+		const metadataCategory = product.metadata["category"] || "Unknown";
+		console.log(product.metadata);
 		if (!categoryMap.has(catId)) {
 			categoryMap.set(catId, {
 				id: catId,

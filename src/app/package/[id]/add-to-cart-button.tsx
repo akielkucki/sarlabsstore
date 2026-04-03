@@ -35,13 +35,13 @@ export function AddToCartButton({
 			type="button"
 			onClick={handleClick}
 			disabled={added}
-			whileTap={{ scale: 0.95 }}
-			animate={added ? { scale: [1, 1.05, 1] } : {}}
+			whileTap={{ scale: 0.97 }}
+			animate={added ? { scale: [1, 1.03, 1] } : {}}
 			transition={{ duration: 0.3, ease: "easeOut" }}
-			className={`w-full rounded-xl px-6 py-4 text-base font-bold transition-colors ${
+			className={`w-full rounded-xl px-6 py-4 text-base font-bold transition-all duration-200 ${
 				added
-					? "bg-green-500/20 text-green-400 border border-green-500/30"
-					: "bg-gradient-to-r from-accent to-rose text-white hover:from-rose hover:to-accent shadow-lg shadow-accent/25 hover:shadow-accent/40"
+					? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
+					: "bg-rose-500 text-white hover:bg-rose-400 shadow-lg shadow-rose-500/20 hover:shadow-rose-500/30"
 			} disabled:opacity-60`}
 		>
 			<AnimatePresence mode="wait" initial={false}>

@@ -11,7 +11,9 @@
       "Bash(npx auth:*)",
       "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(32\\).toString\\('hex'\\)\\)\")",
       "Bash(npx shadcn@latest init -y)",
-      "Bash(npx shadcn@latest init --defaults)"
+      "Bash(npx shadcn@latest init --defaults)",
+      "Bash(npx shadcn@latest add badge sheet separator avatar -y)",
+      "Bash(npx shadcn@latest add \"https://magicui.design/r/marquee\" \"https://magicui.design/r/particles\" \"https://magicui.design/r/shimmer-button\" \"https://magicui.design/r/border-beam\" \"https://magicui.design/r/animated-grid-pattern\" \"https://magicui.design/r/number-ticker\" -y)"
     ]
   }
 }

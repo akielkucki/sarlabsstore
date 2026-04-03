@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCart } from "./cart-provider";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 interface PackageCardProps {
 	pkg: {
@@ -17,11 +18,13 @@ interface PackageCardProps {
 		description: string;
 		priceId: string;
 	};
+	index?: number;
 }
 
-export function PackageCard({ pkg }: PackageCardProps) {
+export function PackageCard({ pkg, index = 0 }: PackageCardProps) {
 	const { addToCart } = useCart();
 	const [added, setAdded] = useState(false);
+	const [hovered, setHovered] = useState(false);
 
 	const handleAdd = (e: React.MouseEvent) => {
 		e.preventDefault();
@@ -38,84 +41,129 @@ export function PackageCard({ pkg }: PackageCardProps) {
 		setTimeout(() => setAdded(false), 2000);
 	};
 
-	const hasDiscount = pkg.base_price !== pkg.total_price && pkg.base_price > pkg.total_price;
-	const currencySymbol = pkg.currency === "USD" ? "$" : pkg.currency === "EUR" ? "\u20ac" : pkg.currency === "GBP" ? "\u00a3" : `${pkg.currency} `;
+	const hasDiscount =
+		pkg.base_price !== pkg.total_price && pkg.base_price > pkg.total_price;
+	const currencySymbol =
+		pkg.currency === "USD"
+			? "$"
+			: pkg.currency === "EUR"
+				? "\u20ac"
+				: pkg.currency === "GBP"
+					? "\u00a3"
+					: `${pkg.currency} `;
 
 	return (
-		<Link
-			href={`/package/${pkg.id}`}
-			className="group relative flex flex-col overflow-hidden rounded-xl border border-card-border bg-gradient-to-b from-zinc-900 to-background hover:border-accent/30 transition-all duration-300 hover:shadow-xl hover:shadow-accent/5"
+		<motion.div
+			initial={{ opacity: 0, y: 24 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{
+				duration: 0.5,
+				delay: index * 0.08,
+				ease: [0.22, 1, 0.36, 1],
+			}}
 		>
-			{/* Image */}
-			<div className="relative aspect-square overflow-hidden bg-zinc-900">
-				{pkg.image ? (
-					<Image
-						src={pkg.image}
-						alt={pkg.name}
-						fill
-						className="object-cover transition-transform duration-500 group-hover:scale-110"
+			<Link
+				href={`/package/${pkg.id}`}
+				className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card/50 backdrop-blur-sm hover:border-rose-500/20 transition-all duration-500"
+				onMouseEnter={() => setHovered(true)}
+				onMouseLeave={() => setHovered(false)}
+			>
+				{/* Border beam on hover */}
+				{hovered && (
+					<BorderBeam
+						size={120}
+						duration={8}
+						colorFrom="#fb7185"
+						colorTo="#a78bfa"
 					/>
-				) : (
-					<div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900">
-						<div className="h-16 w-16 rounded-xl bg-gradient-to-br from-accent/20 to-rose/20 flex items-center justify-center">
-							<svg className="w-8 h-8 text-accent/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-							</svg>
-						</div>
-					</div>
 				)}
-				{hasDiscount && (
-					<div className="absolute top-3 right-3 rounded-full bg-red-500 px-2.5 py-0.5 text-xs font-bold text-white shadow-lg">
-						SALE
-					</div>
-				)}
-			</div>
 
-			{/* Content */}
-			<div className="flex flex-1 flex-col p-4">
-				<h3 className="text-sm font-semibold text-white group-hover:text-accent transition-colors line-clamp-2">
-					{pkg.name}
-				</h3>
-
-				<div className="mt-auto pt-3 flex items-end justify-between">
-					<div>
-						{hasDiscount && (
-							<span className="text-xs text-muted line-through">
-								{currencySymbol}{pkg.base_price.toFixed(2)}
-							</span>
-						)}
-						<div className="text-lg font-bold text-accent">
-							{currencySymbol}{pkg.total_price.toFixed(2)}
+				{/* Image */}
+				<div className="relative aspect-square overflow-hidden bg-secondary">
+					{pkg.image ? (
+						<Image
+							src={pkg.image}
+							alt={pkg.name}
+							fill
+							className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+						/>
+					) : (
+						<div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-secondary to-card">
+							<div className="h-14 w-14 rounded-2xl bg-rose-500/10 flex items-center justify-center">
+								<svg
+									className="w-7 h-7 text-rose-500/40"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={1.5}
+										d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+									/>
+								</svg>
+							</div>
 						</div>
-					</div>
+					)}
+					{/* Hover overlay */}
+					<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-					<motion.button
-						type="button"
-						onClick={handleAdd}
-						whileTap={{ scale: 0.9 }}
-						animate={added ? { scale: [1, 1.15, 1] } : {}}
-						transition={{ duration: 0.3, ease: "easeOut" }}
-						className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-							added
-								? "bg-green-500/20 text-green-400 border border-green-500/30"
-								: "bg-accent/10 text-accent border border-accent/20 hover:bg-accent/20 hover:border-accent/40"
-						}`}
-					>
-						<AnimatePresence mode="wait" initial={false}>
-							<motion.span
-								key={added ? "added" : "add"}
-								initial={{ opacity: 0, y: 6 }}
-								animate={{ opacity: 1, y: 0 }}
-								exit={{ opacity: 0, y: -6 }}
-								transition={{ duration: 0.15 }}
-								className="block"
-							>
-								{added ? "Added!" : "Add to Cart"}
-							</motion.span>
-						</AnimatePresence>
-					</motion.button>
+					{hasDiscount && (
+						<div className="absolute top-2.5 right-2.5 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-lg shadow-rose-500/30">
+							SALE
+						</div>
+					)}
 				</div>
-			</div>
-		</Link>
+
+				{/* Content */}
+				<div className="flex flex-1 flex-col p-4">
+					<h3 className="text-sm font-semibold text-foreground/90 group-hover:text-foreground transition-colors line-clamp-2 leading-snug">
+						{pkg.name}
+					</h3>
+
+					<div className="mt-auto pt-3 flex items-end justify-between">
+						<div>
+							{hasDiscount && (
+								<span className="text-[11px] text-muted-foreground line-through block">
+									{currencySymbol}
+									{pkg.base_price.toFixed(2)}
+								</span>
+							)}
+							<div className="text-lg font-black text-foreground">
+								{currencySymbol}
+								{pkg.total_price.toFixed(2)}
+							</div>
+						</div>
+
+						<motion.button
+							type="button"
+							onClick={handleAdd}
+							whileTap={{ scale: 0.9 }}
+							animate={added ? { scale: [1, 1.15, 1] } : {}}
+							transition={{ duration: 0.3, ease: "easeOut" }}
+							className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-all duration-200 ${
+								added
+									? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
+									: "bg-rose-500/10 text-rose-400 border border-rose-500/15 hover:bg-rose-500/20 hover:border-rose-500/30"
+							}`}
+						>
+							<AnimatePresence mode="wait" initial={false}>
+								<motion.span
+									key={added ? "added" : "add"}
+									initial={{ opacity: 0, y: 6 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: -6 }}
+									transition={{ duration: 0.15 }}
+									className="block"
+								>
+									{added ? "Added!" : "Add"}
+								</motion.span>
+							</AnimatePresence>
+						</motion.button>
+					</div>
+				</div>
+			</Link>
+		</motion.div>
 	);
 }
