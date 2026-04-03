@@ -16,9 +16,8 @@ model User {
   points        Int       @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
-  accounts Account[]
-  sessions Session[]
+  accounts      Account[]
+  sessions      Session[]
 }
 
 model Account {
@@ -34,8 +33,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -45,8 +43,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -55,4 +52,18 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model PointsAward {
+  id            String   @id @default(cuid())
+  userId        String
+  paymentIntent String   @unique
+  points        Int
+  createdAt     DateTime @default(now())
+}
+
+model Transactions {
+  id        String  @id
+  date      String?
+  delivered Int?
 }

@@ -3,6 +3,7 @@ import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/cart-provider";
 import { SessionProvider } from "@/components/session-provider";
+import { PointsProvider } from "@/components/points-provider";
 import { NavWrapper } from "@/components/nav-wrapper";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
 		>
 			<body className="min-h-full flex flex-col bg-background text-foreground">
 				<SessionProvider>
+					<PointsProvider>
 					<CartProvider>
 						<NavWrapper />
 						<main className="flex-1">{children}</main>
@@ -60,6 +62,7 @@ export default function RootLayout({
 							</div>
 						</footer>
 					</CartProvider>
+					</PointsProvider>
 				</SessionProvider>
 			</body>
 		</html>

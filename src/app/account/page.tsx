@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
+import { usePoints } from "@/components/points-provider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -9,6 +10,7 @@ import { BorderBeam } from "@/components/ui/border-beam";
 
 export default function AccountPage() {
 	const { data: session, status } = useSession();
+	const { points } = usePoints();
 	const router = useRouter();
 
 	useEffect(() => {
@@ -52,7 +54,7 @@ export default function AccountPage() {
 							Points Balance
 						</p>
 						<p className="text-5xl font-black text-foreground">
-							<NumberTicker value={session.user.points} />
+							<NumberTicker value={points} />
 						</p>
 					</div>
 				</div>
