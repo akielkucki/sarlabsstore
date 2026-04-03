@@ -21,14 +21,26 @@ function MousePosition(): MousePosition {
   })
 
   useEffect(() => {
+    let rafId: number | null = null
+    let latestX = 0
+    let latestY = 0
+
     const handleMouseMove = (event: MouseEvent) => {
-      setMousePosition({ x: event.clientX, y: event.clientY })
+      latestX = event.clientX
+      latestY = event.clientY
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          setMousePosition({ x: latestX, y: latestY })
+          rafId = null
+        })
+      }
     }
 
-    window.addEventListener("mousemove", handleMouseMove)
+    window.addEventListener("mousemove", handleMouseMove, { passive: true })
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove)
+      if (rafId !== null) cancelAnimationFrame(rafId)
     }
   }, [])
 
@@ -99,6 +111,7 @@ export const Particles: React.FC<ParticlesProps> = ({
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1
   const rafID = useRef<number | null>(null)
   const resizeTimeout = useRef<NodeJS.Timeout | null>(null)
+  const cachedRect = useRef<DOMRect | null>(null)
   const initCanvasRef = useRef<() => void>(() => {})
   const onMouseMoveRef = useRef<() => void>(() => {})
   const animateRef = useRef<() => void>(() => {})
@@ -147,7 +160,10 @@ export const Particles: React.FC<ParticlesProps> = ({
 
   const onMouseMove = () => {
     if (canvasRef.current) {
-      const rect = canvasRef.current.getBoundingClientRect()
+      if (!cachedRect.current) {
+        cachedRect.current = canvasRef.current.getBoundingClientRect()
+      }
+      const rect = cachedRect.current
       const { w, h } = canvasSize.current
       const x = mousePosition.x - rect.left - w / 2
       const y = mousePosition.y - rect.top - h / 2
@@ -161,6 +177,7 @@ export const Particles: React.FC<ParticlesProps> = ({
 
   const resizeCanvas = () => {
     if (canvasContainerRef.current && canvasRef.current && context.current) {
+      cachedRect.current = null // invalidate cached rect on resize
       canvasSize.current.w = canvasContainerRef.current.offsetWidth
       canvasSize.current.h = canvasContainerRef.current.offsetHeight
 

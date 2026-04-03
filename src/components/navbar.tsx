@@ -17,8 +17,17 @@ export function Navbar({ categories }: { categories: Category[] }) {
 	const [menuOpen, setMenuOpen] = useState(false);
 
 	useEffect(() => {
-		const handler = () => setScrolled(window.scrollY > 10);
-		window.addEventListener("scroll", handler);
+		let ticking = false;
+		const handler = () => {
+			if (!ticking) {
+				ticking = true;
+				requestAnimationFrame(() => {
+					setScrolled(window.scrollY > 10);
+					ticking = false;
+				});
+			}
+		};
+		window.addEventListener("scroll", handler, { passive: true });
 		return () => window.removeEventListener("scroll", handler);
 	}, []);
 

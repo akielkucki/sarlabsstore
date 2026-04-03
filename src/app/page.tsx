@@ -1,9 +1,17 @@
 import { getCategories } from "@/lib/stripe";
 import { PackageCard } from "@/components/package-card";
-import { DealsCarousel } from "@/components/deals-carousel";
-import { Hero } from "@/components/hero";
-import { Testimonials } from "@/components/testimonials";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+
+const Hero = dynamic(() =>
+	import("@/components/hero").then((m) => m.Hero),
+);
+const DealsCarousel = dynamic(() =>
+	import("@/components/deals-carousel").then((m) => m.DealsCarousel),
+);
+const Testimonials = dynamic(() =>
+	import("@/components/testimonials").then((m) => m.Testimonials),
+);
 
 export default async function Home() {
 	let categories;

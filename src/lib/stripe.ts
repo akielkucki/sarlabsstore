@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { unstable_cache } from "next/cache";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -56,9 +57,10 @@ function mapProduct(
 	};
 }
 
-async function fetchAllProducts(): Promise<StorePackage[]> {
-	const products: StorePackage[] = [];
+async function getCategoriesUncached(): Promise<StoreCategory[]> {
+	const categoryMap = new Map<string, StoreCategory>();
 
+	// Single API call - products already include metadata and default_price
 	const productList = await stripe.products.list({
 		active: true,
 		limit: 100,
@@ -68,57 +70,37 @@ async function fetchAllProducts(): Promise<StorePackage[]> {
 	for (const product of productList.data) {
 		const price = product.default_price as Stripe.Price | null;
 		if (!price || !price.unit_amount) continue;
-		products.push(mapProduct(product, price));
-	}
 
-	return products;
-}
-
-export async function getCategories(): Promise<StoreCategory[]> {
-	const products = await fetchAllProducts();
-
-	const categoryMap = new Map<string, StoreCategory>();
-
-	for (const pkg of products) {
+		const pkg = mapProduct(product, price);
 		const catId = pkg.category.id;
-		const product = await stripe.products.retrieve(pkg.id);
-		const metadataCategory = product.metadata["category"] || "Unknown";
-		console.log(product.metadata);
+
 		if (!categoryMap.has(catId)) {
 			categoryMap.set(catId, {
 				id: catId,
 				name: pkg.category.name,
 				description: "",
 				packages: [],
-				order: 0,
+				order: product.metadata.category_order
+					? Number(product.metadata.category_order)
+					: 0,
 			});
 		}
 		categoryMap.get(catId)!.packages.push(pkg);
 	}
 
-	// Set order from first product's metadata in each category
-	for (const pkg of products) {
-		const cat = categoryMap.get(pkg.category.id);
-		if (cat && cat.order === 0) {
-			// Look up the raw product to get category_order
-			const rawProduct = (
-				await stripe.products.list({
-					ids: [pkg.id],
-					limit: 1,
-				})
-			).data[0];
-			if (rawProduct?.metadata.category_order) {
-				cat.order = Number(rawProduct.metadata.category_order);
-			}
-		}
-	}
-
 	return Array.from(categoryMap.values()).sort((a, b) => a.order - b.order);
 }
+
+export const getCategories = unstable_cache(
+	getCategoriesUncached,
+	["store-categories"],
+	{ revalidate: 60 },
+);
 
 export async function getCategory(
 	slug: string,
 ): Promise<StoreCategory | null> {
+	// This uses the cached getCategories, so no extra API calls
 	const categories = await getCategories();
 	return categories.find((c) => c.id === slug) ?? null;
 }
